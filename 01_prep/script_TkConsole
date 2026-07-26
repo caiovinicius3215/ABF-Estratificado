@@ -1,0 +1,41 @@
+# 1. Selecione os fosforos da membrana
+
+set selP_text "resname OSM POPC SAPC SAPE SAPI SAPS SLPC SOPE and name P"
+
+set selP [atomselect top $selP_text frame 0]
+
+puts "Selecao P da membrana:"
+puts "Texto: [$selP text]"
+puts "Numero de atomos P: [$selP num]"
+puts "Resnames encontrados: [lsort -unique [$selP get resname]]"
+puts "Nomes atomicos encontrados: [lsort -unique [$selP get name]]" 
+
+# 2. Gerar atomNumbers dos fosforos da membrana
+
+proc atomnumbers_from_selection {sel {perline 12}} {
+    set idxs [$sel get index]
+    set nums {}
+    foreach i $idxs {
+        lappend nums [expr {$i + 1}]
+    }
+
+    set out ""
+    set n 0
+    foreach a $nums {
+        append out [format "%8d" $a]
+        incr n
+        if {$n % $perline == 0} {
+            append out "\n"
+        }
+    }
+    return $out
+}
+
+# 3. Gerar lista explicita dos atomos P
+
+set P_atomnumbers [atomnumbers_from_selection $selP]
+
+puts "atomNumbers dos P da membrana:"
+puts "atomNumbers {"
+puts $P_atomnumbers
+puts "}"
